@@ -7,10 +7,23 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+      - PGPORT=5435
     healthcheck:
-      test: ["CMD", "psql", "-U", "${POSTGRES_USER}", "${POSTGRES_DB}"]
+      test:
+        [
+          "CMD",
+          "psql",
+          "-U",
+          "${POSTGRES_USER}",
+          "${POSTGRES_DB}"
+        ]
+    expose:
+      - "5435"
     ports:
-      - '5432:5432'
+      - "5435:5435"
+    volumes:
+      - /tmp/backups:/home/backups
+    command: -p 5435 # Overrides default port which is commonly 5432
 
   localstack:
     image: localstack/localstack:1.1
@@ -27,7 +40,16 @@ services:
     depends_on:
       localstack:
         condition: service_healthy
-    entrypoint: ["aws", "--endpoint-url", "http://localstack:4566", "s3api", "create-bucket", "--bucket", "${S3_BUCKET}"]
+    entrypoint:
+      [
+        "aws",
+        "--endpoint-url",
+        "http://localstack:4566",
+        "s3api",
+        "create-bucket",
+        "--bucket",
+        "${S3_BUCKET}"
+      ]
     environment:
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
@@ -52,7 +74,7 @@ services:
 
   test:
     image: python:3.10-alpine
-    command: ["./test.sh"]
+    command: [ "./test.sh" ]
     profiles:
       - dev
     working_dir: /scripts
