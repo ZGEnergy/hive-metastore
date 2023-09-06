@@ -22,8 +22,8 @@ services:
     ports:
       - "5435:5435"
     volumes:
-      - /volume1/hive-metastore/postgres/backups:/home/backups
-      - /volume1/hive-metastore/postgres/data:/var/lib/postgresql/data
+      - /volume1/hive-metastore/postgresql/backups:/home/backups
+      - /volume1/hive-metastore/postgresql/data:/var/lib/postgresql/data
     command: -p 5435 # Overrides default port which is commonly 5432
 
   localstack:
