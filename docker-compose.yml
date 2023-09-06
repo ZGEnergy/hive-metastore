@@ -22,7 +22,8 @@ services:
     ports:
       - "5435:5435"
     volumes:
-      - /tmp/backups:/home/backups
+      - /volume1/hive-metastore/postgres/backups:/home/backups
+      - /volume1/hive-metastore/postgres/data:/var/lib/postgresql/data
     command: -p 5435 # Overrides default port which is commonly 5432
 
   localstack:
@@ -32,7 +33,7 @@ services:
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
-      - "/tmp/localstack:/var/lib/localstack"
+      - "/volume1/hive-metastore/localstack:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   s3_setup:
